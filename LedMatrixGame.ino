@@ -12,20 +12,16 @@ MultiLedControl lc = MultiLedControl(12,11,10,2,2,8,8);
 BaseGame *game;
 
 void setup() {
-  /*
-   The MAX72XX is in power-saving mode on startup,
-   we have to do a wakeup call
-   */
+  randomSeed(analogRead(0));
   lc.shutdown(false);
-  /* Set the brightness to a medium values */
   lc.setIntensity(1);
-  /* and clear the display */
   lc.clearDisplay();
-  //game = new PointControlGame(&kbd, &lc);
-  game = new MatrixTest(&kbd, &lc);
+  game = new PointControlGame(&kbd, &lc);
+  // game = new MatrixTest(&kbd, &lc);
 }
 
 void loop() {
+  kbd.read();
   game->loop();
 }
 

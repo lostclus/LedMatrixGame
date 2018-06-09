@@ -6,9 +6,11 @@
 
 class PointControlGame : public BaseGame {
   private:
-    byte pointX, pointY;
+    byte pointX, pointY,
+         targetX, targetY;
   public:
     PointControlGame(Keyboard *kbd, MultiLedControl *lc);
+    void nextTarget();
     virtual void loop();
 };
 
