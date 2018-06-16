@@ -1,8 +1,9 @@
 #include "Keyboard.h"
 #include "MultiLedControl.h"
 #include "BaseGame.h"
-#include "PointControlGame.h"
 #include "MatrixTest.h"
+#include "PointControlGame.h"
+#include "SnakeGame.h"
 
 const byte kbdRowPins[] = {4, 5, 6};
 const byte kbdColPins[] = {7, 8, 9};
@@ -16,8 +17,9 @@ void setup() {
   lc.shutdown(false);
   lc.setIntensity(1);
   lc.clearDisplay();
-  game = new PointControlGame(&kbd, &lc);
   // game = new MatrixTest(&kbd, &lc);
+  // game = new PointControlGame(&kbd, &lc);
+  game = new SnakeGame(&kbd, &lc);
 }
 
 void loop() {
