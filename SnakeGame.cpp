@@ -60,8 +60,19 @@ void SnakeGame::advance() {
   bool grow = (hx == foodX && hy == foodY);
   if (grow) {
       length++;  
-      foodX = random(lc->getColumnsCount());
-      foodY = random(lc->getRowsCount());
+      bool inSnake;
+      do {
+        foodX = random(lc->getColumnsCount());
+        foodY = random(lc->getRowsCount());
+        inSnake = false;
+        for (int i=0; i<length; i++) {
+          if ((snake[i] & 0x0f) == foodX &&
+              (snake[i] >> 4) == foodY) {
+            inSnake = true;
+            break;
+          }
+        }
+      } while (inSnake);
   }
 
   for (int i=length-1; i>=0; i--) {
@@ -74,10 +85,10 @@ void SnakeGame::readControls() {
   int dx = 0,
       dy = 0;
 
-  if (kbd->isKeyPress(KEY_UP)) dy = -1;
-  else if (kbd->isKeyPress(KEY_DOWN)) dy = 1;
-  if (kbd->isKeyPress(KEY_LEFT)) dx = -1;
-  else if (kbd->isKeyPress(KEY_RIGHT)) dx = 1;
+  if (kbd->isKeyDown(KEY_UP)) dy = -1;
+  else if (kbd->isKeyDown(KEY_DOWN)) dy = 1;
+  if (kbd->isKeyDown(KEY_LEFT)) dx = -1;
+  else if (kbd->isKeyDown(KEY_RIGHT)) dx = 1;
 
   if (dy != 0 && vecX != 0) {
     vecX = 0;
@@ -93,7 +104,7 @@ void SnakeGame::loop() {
   unsigned long now = millis();
 
   if (!isGgameOver) {
-    if (now - prevAdvance > 500) {
+    if (now - prevAdvance > 250) {
       lc->setLed(snake[length-1] >> 4, snake[length-1] & 0x0f, false);
       advance();
       prevAdvance = now;

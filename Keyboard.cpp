@@ -21,6 +21,7 @@ word Keyboard::read() {
       bitWrite(downKeys, ri * colCount + ci,
                int(!bool(digitalRead(rp))));
       pinMode(rp, INPUT);
+      delay(1);
     }
 
     pinMode(cp, INPUT);
