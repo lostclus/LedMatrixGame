@@ -14,15 +14,27 @@ MultiLedControl lc = MultiLedControl(12,11,10,2,2,8,8);
 BaseGame *game;
 bool pause;
 
+#define GAME_FACTORY(CLASS) \
+  [](Keyboard *kbd, MultiLedControl *lc){ return (BaseGame*)new CLASS(kbd, lc); }
+
+BaseGame *(*games[])(Keyboard *kbd, MultiLedControl *lc) = {
+  GAME_FACTORY(SnakeGame),
+  GAME_FACTORY(PointControlGame),
+};
+int gameIndex;
+
+BaseGame *newGame() {
+  return games[gameIndex](&kbd, &lc);
+}
+
 void setup() {
   randomSeed(analogRead(0));
   lc.shutdown(false);
   lc.setIntensity(1);
   lc.clearDisplay();
-  // game = new MatrixTest(&kbd, &lc);
-  // game = new PointControlGame(&kbd, &lc);
   pause = false;
-  game = new SnakeGame(&kbd, &lc);
+  gameIndex = 0;
+  game = newGame();
 }
 
 void loop() {
@@ -31,10 +43,11 @@ void loop() {
   if (kbd.isKeyPress(KEY_START))
     pause = !pause;
   if (kbd.isKeyPress(KEY_SELECT)) {
-    if (game != NULL) {
+    if (game != NULL)
       delete game;
-      game = new SnakeGame(&kbd, &lc);
-    }
+    if (++gameIndex >= (sizeof(games) / sizeof(*games)))
+      gameIndex = 0;
+    game = newGame();
   }
 
   if (game != NULL && !pause) game->loop();
