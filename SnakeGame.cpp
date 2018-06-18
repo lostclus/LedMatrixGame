@@ -6,10 +6,8 @@ SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
   : BaseGame(kbd, lc) {
   int half;
 
-  snake = (byte*)malloc(
-    sizeof(byte) *
-    lc->getColumnsCount() *
-    lc->getRowsCount());
+  snake = new byte[lc->getColumnsCount() *
+                   lc->getRowsCount()];
   isGgameOver = false;
   prevAdvance = 0;
   blinkCount = 3;
@@ -30,7 +28,7 @@ SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
 }
 
 SnakeGame::~SnakeGame() {
-  free(snake);
+  delete[] snake;
 }
 
 void SnakeGame::render() {
