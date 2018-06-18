@@ -1,5 +1,6 @@
 #include "SnakeGame.h"
 #include "KeyDef.h"
+#include "Speaker.h"
 
 SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
   : BaseGame(kbd, lc) {
@@ -26,7 +27,6 @@ SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
 
   lc->clearDisplay();
   render();
-  randomSeed(millis());    
 }
 
 SnakeGame::~SnakeGame() {
@@ -59,20 +59,27 @@ void SnakeGame::advance() {
 
   bool grow = (hx == foodX && hy == foodY);
   if (grow) {
-      length++;  
-      bool inSnake;
-      do {
-        foodX = random(lc->getColumnsCount());
-        foodY = random(lc->getRowsCount());
-        inSnake = false;
-        for (int i=0; i<length; i++) {
-          if ((snake[i] & 0x0f) == foodX &&
-              (snake[i] >> 4) == foodY) {
-            inSnake = true;
-            break;
-          }
+    length++;
+    bool inSnake;
+    randomSeed(millis());
+    do {
+      foodX = random(lc->getColumnsCount());
+      foodY = random(lc->getRowsCount());
+      inSnake = false;
+      for (int i=0; i<length; i++) {
+        if ((snake[i] & 0x0f) == foodX &&
+            (snake[i] >> 4) == foodY) {
+          inSnake = true;
+          break;
         }
-      } while (inSnake);
+      }
+    } while (inSnake);
+
+    for (int i=0; i<10; i++) {
+      tone(SPEAKER_PIN, 440 + i * 44);
+      delay(20);
+    }
+    noTone(SPEAKER_PIN);
   }
 
   for (int i=length-1; i>=0; i--) {

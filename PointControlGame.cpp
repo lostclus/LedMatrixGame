@@ -1,5 +1,6 @@
 #include "PointControlGame.h"
 #include "KeyDef.h"
+#include "Speaker.h"
 
 PointControlGame::PointControlGame(Keyboard *kbd, MultiLedControl *lc)
   : BaseGame(kbd, lc) {
@@ -35,7 +36,12 @@ void PointControlGame::loop() {
     lc->setLed(pointY, pointX, true);
 
     if (pointX == targetX && pointY == targetY) {
-      tone(3, 1000, 200);
+      for (int i=0; i<10; i++) {
+        tone(SPEAKER_PIN, 440 + i * 44);
+        delay(20);
+      }
+      noTone(SPEAKER_PIN);
+
       nextTarget();
     }
   }
