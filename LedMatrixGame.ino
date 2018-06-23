@@ -32,6 +32,7 @@ void setup() {
   lc.shutdown(false);
   lc.setIntensity(1);
   lc.clearDisplay();
+
   pause = false;
   gameIndex = 0;
   game = newGame();

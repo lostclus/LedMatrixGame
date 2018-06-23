@@ -57,8 +57,10 @@ void SnakeGame::advance() {
 
   bool grow = (hx == foodX && hy == foodY);
   if (grow) {
-    length++;
     bool inSnake;
+    tone(SPEAKER_PIN, 440);
+
+    length++;
     randomSeed(millis());
     do {
       foodX = random(lc->getColumnsCount());
@@ -108,6 +110,8 @@ void SnakeGame::readControls() {
 void SnakeGame::loop() {
   unsigned long now = millis();
 
+  readControls();
+
   if (!isGgameOver) {
     if (now - prevAdvance > 250) {
       lc->setLed(snake[length-1] >> 4, snake[length-1] & 0x0f, false);
@@ -124,8 +128,6 @@ void SnakeGame::loop() {
       blinkCount--;     
     }
   }
-
-  readControls();
 }
 
 // vim:et:sw=2:ai
