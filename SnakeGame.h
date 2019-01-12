@@ -16,7 +16,7 @@ class SnakeGame : public BaseGame {
 
     void render();
     void advance();
-    void SnakeGame::readControls();
+    void readControls();
  
   public:
     SnakeGame(Keyboard *kbd, MultiLedControl *lc);
