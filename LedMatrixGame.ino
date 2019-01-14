@@ -73,7 +73,8 @@ void setup() {
 }
 
 void loop() {
-  kbd.read();
+  unsigned long now = millis();
+  kbd.read(now);
 
   if (kbd.isKeyPress(KEY_START))
     pause = !pause;

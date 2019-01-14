@@ -1,14 +1,21 @@
 #include "Keyboard.h"
 
 Keyboard::Keyboard(byte rowCount, byte colCount, byte *rowPins, byte *colPins) {
+  int i;
+
   this->rowCount = rowCount;
   this->colCount = colCount;
   this->rowPins = rowPins;
   this->colPins = colPins;
+  keysTime = 0;
+  for (i = 0; i < sizeof(keysV) / sizeof(keysV[0]); i++)
+    keysV[i] = 0;
 }
 
-word Keyboard::read() {
-  word prevKeys = downKeys;
+word Keyboard::read(unsigned long now) {
+  word curKeys,
+       prevUpKeys;
+  int i;
 
   for (int ci=0; ci<colCount; ci++) {
     byte cp = colPins[ci];
@@ -21,13 +28,32 @@ word Keyboard::read() {
       bitWrite(downKeys, ri * colCount + ci,
                int(!bool(digitalRead(rp))));
       pinMode(rp, INPUT);
-      delay(1);
     }
 
     pinMode(cp, INPUT);
   }
 
-  pressKeys = ((~prevKeys) & downKeys);
+  pressKeys = 0;
+
+  if (now > keysTime) {
+    curKeys = prevUpKeys = ~((word)0);
+    for (i = 0; i < sizeof(keysV) / sizeof(keysV[0]); i++) {
+      if (i < sizeof(keysV) / sizeof(keysV[0]) / 2) {
+        curKeys &= keysV[i];
+      } else {
+        prevUpKeys &= ~keysV[i];
+      }
+    }
+    pressKeys = prevUpKeys & curKeys;
+
+    for (i = sizeof(keysV) / sizeof(keysV[0]) - 1; i > 0; i--)
+      keysV[i] = keysV[i-1];
+
+    keysV[0] = ~((word)0);
+    keysTime = now;
+  }
+  keysV[0] &= downKeys;
+
   return downKeys;
 }
 

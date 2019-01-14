@@ -9,11 +9,13 @@ class Keyboard {
          colCount,
          *rowPins,
          *colPins;
+    word keysV[10];
+    unsigned long keysTime;
   public:
     word downKeys,
          pressKeys;
     Keyboard(byte rowCount, byte colCount, byte *rowPins, byte *colPins);
-    word read();
+    word read(unsigned long now);
     bool isKeyDown(word key);
     bool isKeyPress(word key);
 };
