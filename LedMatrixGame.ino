@@ -76,14 +76,18 @@ void loop() {
   unsigned long now = millis();
   kbd.read(now);
 
-  if (kbd.isKeyPress(KEY_START))
-    pause = !pause;
+  if (kbd.isKeyPress(KEY_START)) {
+    if (game == NULL || !game->handleStart())
+      pause = !pause;
+  }
   if (kbd.isKeyPress(KEY_SELECT)) {
-    if (game != NULL)
-      delete game;
-    if (++gameIndex >= (sizeof(games) / sizeof(*games)))
-      gameIndex = 0;
-    game = newGame();
+    if (game == NULL || !game->handleSelect()) {
+      if (game != NULL)
+        delete game;
+      if (++gameIndex >= (sizeof(games) / sizeof(*games)))
+        gameIndex = 0;
+      game = newGame();
+    }
   }
 
   if (game != NULL && !pause) game->loop();

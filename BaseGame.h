@@ -11,6 +11,8 @@ class BaseGame {
   public:
     BaseGame(Keyboard *kbd, MultiLedControl *lc);
     virtual void loop() = 0;
+    virtual bool handleStart();
+    virtual bool handleSelect();
 };
 
 #endif	//BaseGame.h

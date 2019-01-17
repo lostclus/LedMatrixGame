@@ -10,10 +10,10 @@ class SnakeGame : public BaseGame {
          length;
     int foodX, foodY,
         vecX, vecY;
-    bool isGgameOver;
+    bool isGameOver;
     long prevAdvance;
-    int blinkCount;
 
+    void newGame();
     void render();
     void advance();
     void readControls();
@@ -22,6 +22,7 @@ class SnakeGame : public BaseGame {
     SnakeGame(Keyboard *kbd, MultiLedControl *lc);
     ~SnakeGame();
     virtual void loop();
+    virtual bool handleStart();
 };
 
 #endif	//SnakeGame.h

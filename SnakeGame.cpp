@@ -6,13 +6,20 @@
 
 SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
   : BaseGame(kbd, lc) {
-  int half;
-
   snake = new byte[lc->getColumnsCount() *
                    lc->getRowsCount()];
-  isGgameOver = false;
+  newGame();
+}
+
+SnakeGame::~SnakeGame() {
+  delete[] snake;
+}
+
+void SnakeGame::newGame() {
+  int half;
+
+  isGameOver = false;
   prevAdvance = 0;
-  blinkCount = 3;
 
   half = lc->getColumnsCount() / 2;
   length = lc->getColumnsCount() / 3;
@@ -29,10 +36,6 @@ SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
   render();
 }
 
-SnakeGame::~SnakeGame() {
-  delete[] snake;
-}
-
 void SnakeGame::render() {
   for (int i=0; i<length; i++)
     lc->setLed(snake[i] >> 4, snake[i] & 0x0f, true);
@@ -46,14 +49,14 @@ void SnakeGame::advance() {
   if (hx < 0 || hx >= lc->getColumnsCount() ||
       hy < 0 || hy >= lc->getRowsCount()) {
     // showGameOverMessage();
-    isGgameOver = true;
+    isGameOver = true;
   }
 
   for (int i=0; i<length; i++) {
     if ((snake[i] & 0x0f) == hx &&
         (snake[i] >> 4) == hy) {
       // showGameOverMessage();
-      isGgameOver = true;
+      isGameOver = true;
     }
   }
 
@@ -109,7 +112,7 @@ void SnakeGame::loop() {
 
   readControls();
 
-  if (!isGgameOver) {
+  if (!isGameOver) {
     if (now - prevAdvance > 250) {
       lc->setLed(snake[length-1] >> 4, snake[length-1] & 0x0f, false);
       advance();
@@ -117,16 +120,22 @@ void SnakeGame::loop() {
       render();
     }
   } else {
-    while (blinkCount > 0) {
+    if ((now / 300) % 2 == 0) {
       lc->clearDisplay();
-      delay(300);
+    } else {
       render();
-      delay(300);
-      blinkCount--;     
     }
   }
 
   rtttl::play();
+}
+
+bool SnakeGame::handleStart() {
+  if (isGameOver) {
+    newGame();
+    return true;
+  }
+  return false;
 }
 
 // vim:et:sw=2:ai
