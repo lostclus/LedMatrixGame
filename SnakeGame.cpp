@@ -1,3 +1,5 @@
+#include <NonBlockingRtttl.h>
+
 #include "SnakeGame.h"
 #include "KeyDef.h"
 #include "Speaker.h"
@@ -58,7 +60,8 @@ void SnakeGame::advance() {
   bool grow = (hx == foodX && hy == foodY);
   if (grow) {
     bool inSnake;
-    tone(SPEAKER_PIN, 440);
+
+    rtttl::begin(SPEAKER_PIN, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
 
     length++;
     randomSeed(millis());
@@ -74,16 +77,10 @@ void SnakeGame::advance() {
         }
       }
     } while (inSnake);
-
-    for (int i=0; i<10; i++) {
-      tone(SPEAKER_PIN, 440 + i * 44);
-      delay(20);
-    }
-    noTone(SPEAKER_PIN);
   }
 
-  for (int i=length-1; i>=0; i--) {
-      snake[i + 1] = snake[i];
+  for (int i=length-1; i>0; i--) {
+      snake[i] = snake[i-1];
   }
   snake[0] = (hy << 4) + hx;
 }
@@ -128,6 +125,8 @@ void SnakeGame::loop() {
       blinkCount--;     
     }
   }
+
+  rtttl::play();
 }
 
 // vim:et:sw=2:ai

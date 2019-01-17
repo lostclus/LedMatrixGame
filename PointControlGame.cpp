@@ -1,3 +1,5 @@
+#include <NonBlockingRtttl.h>
+
 #include "PointControlGame.h"
 #include "KeyDef.h"
 #include "Speaker.h"
@@ -36,17 +38,14 @@ void PointControlGame::loop() {
     lc->setLed(pointY, pointX, true);
 
     if (pointX == targetX && pointY == targetY) {
-      for (int i=0; i<10; i++) {
-        tone(SPEAKER_PIN, 440 + i * 44);
-        delay(20);
-      }
-      noTone(SPEAKER_PIN);
+      rtttl::begin(SPEAKER_PIN, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
 
       nextTarget();
     }
   }
 
   lc->setLed(targetY, targetX, now % 500 < 250);
+  rtttl::play();
 }
 
 // vim:et:sw=2:ai
