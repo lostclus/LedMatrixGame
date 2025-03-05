@@ -8,21 +8,20 @@ class SnakeGame : public BaseGame {
   private:
     byte *snake,
          length;
-    int foodX, foodY,
+    int width, height,
+        foodX, foodY,
         vecX, vecY;
-    bool isGameOver;
     long prevAdvance;
 
-    void newGame();
     void render();
     void advance();
     void readControls();
  
   public:
-    SnakeGame(Keyboard *kbd, MultiLedControl *lc);
+    SnakeGame(Keyboard *kbd, Display *disp, int buzzerPin);
     ~SnakeGame();
-    virtual void loop();
-    virtual bool handleStart();
+    virtual void reset();
+    virtual void handle();
 };
 
 #endif	//SnakeGame.h

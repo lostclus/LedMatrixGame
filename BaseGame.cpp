@@ -1,16 +1,12 @@
 #include "BaseGame.h"
 
-BaseGame::BaseGame(Keyboard *kbd, MultiLedControl *lc) {
+BaseGame::BaseGame(Keyboard *kbd, Display *disp, int buzzerPin) {
   this->kbd = kbd;
-  this->lc = lc;
+  this->disp = disp;
+  this->buzzerPin = buzzerPin;
 }
 
-bool BaseGame::handleStart() {
-  return false;
-}
-
-bool BaseGame::handleSelect() {
-  return false;
+void BaseGame::reset() {
 }
 
 // vim:et:sw=2:ai

@@ -9,9 +9,9 @@ class PointControlGame : public BaseGame {
     byte pointX, pointY,
          targetX, targetY;
   public:
-    PointControlGame(Keyboard *kbd, MultiLedControl *lc);
+    PointControlGame(Keyboard *kbd, Display *disp, int buzzerPin);
     void nextTarget();
-    virtual void loop();
+    virtual void handle();
 };
 
 #endif	//PointControlGame.h

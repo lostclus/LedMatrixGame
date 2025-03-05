@@ -2,26 +2,26 @@
 
 #include "PointControlGame.h"
 #include "KeyDef.h"
-#include "Speaker.h"
 
-PointControlGame::PointControlGame(Keyboard *kbd, MultiLedControl *lc)
-  : BaseGame(kbd, lc) {
-  pointX = lc->getColumnsCount() / 2;
-  pointY = lc->getRowsCount() / 2;
-  lc->clearDisplay();
-  lc->setLed(pointY, pointX, true);
+PointControlGame::PointControlGame(Keyboard *kbd, Display *disp, int buzzerPin)
+  : BaseGame(kbd, disp, buzzerPin) {
+  pointX = disp->matrix.width() / 2;
+  pointY = disp->matrix.height() / 2;
+  disp->matrix.clear();
+  disp->matrix.dot(pointX, pointY, 1);
+  disp->matrix.update();
   nextTarget();
 }
 
 void PointControlGame::nextTarget() {
   do {
-    targetX = random(lc->getColumnsCount());
-    targetY = random(lc->getRowsCount());
+    targetX = random(disp->matrix.width());
+    targetY = random(disp->matrix.height());
   }
   while (targetX == pointX && targetY == pointY);
 }
 
-void PointControlGame::loop() {
+void PointControlGame::handle() {
   int moveX = 0,
       moveY = 0;
   unsigned long now = millis();
@@ -32,19 +32,21 @@ void PointControlGame::loop() {
   else if (kbd->isKeyPress(KEY_RIGHT)) moveX = 1;
 
   if (moveX != 0 || moveY != 0) {
-    lc->setLed(pointY, pointX, false);
-    pointX = max(0, min(lc->getColumnsCount() - 1, pointX + moveX));
-    pointY = max(0, min(lc->getRowsCount() - 1, pointY + moveY));
-    lc->setLed(pointY, pointX, true);
+    disp->matrix.dot(pointX, pointY, 0);
+    pointX = max(0, min(disp->matrix.width() - 1, pointX + moveX));
+    pointY = max(0, min(disp->matrix.height() - 1, pointY + moveY));
+    disp->matrix.dot(pointX, pointY, 1);
 
     if (pointX == targetX && pointY == targetY) {
-      rtttl::begin(SPEAKER_PIN, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
+      rtttl::begin(buzzerPin, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
 
       nextTarget();
     }
   }
 
-  lc->setLed(targetY, targetX, now % 500 < 250);
+  disp->matrix.dot(targetX, targetY, now % 500 < 250);
+  disp->matrix.update();
+
   rtttl::play();
 }
 

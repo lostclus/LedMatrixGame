@@ -2,27 +2,27 @@
 
 #include "SnakeGame.h"
 #include "KeyDef.h"
-#include "Speaker.h"
 
-SnakeGame::SnakeGame(Keyboard *kbd, MultiLedControl *lc)
-  : BaseGame(kbd, lc) {
-  snake = new byte[lc->getColumnsCount() *
-                   lc->getRowsCount()];
-  newGame();
+SnakeGame::SnakeGame(Keyboard *kbd, Display *disp, int buzzerPin)
+  : BaseGame(kbd, disp, buzzerPin) {
+  width = disp->matrix.width();
+  height = disp->matrix.height();
+  snake = new byte[width * height];
+  reset();
 }
 
 SnakeGame::~SnakeGame() {
   delete[] snake;
 }
 
-void SnakeGame::newGame() {
+void SnakeGame::reset() {
   int half;
 
   isGameOver = false;
   prevAdvance = 0;
 
-  half = lc->getColumnsCount() / 2;
-  length = lc->getColumnsCount() / 3;
+  half = width / 2;
+  length = width / 3;
 
   for (int i=0; i<length; i++)
     snake[i] = ((half + i) << 4) + half - 1;
@@ -32,22 +32,22 @@ void SnakeGame::newGame() {
   vecX = 0;
   vecY = -1;
 
-  lc->clearDisplay();
+  disp->matrix.clearDisplay();
   render();
 }
 
 void SnakeGame::render() {
   for (int i=0; i<length; i++)
-    lc->setLed(snake[i] >> 4, snake[i] & 0x0f, true);
-  lc->setLed(foodY, foodX, true);
+    disp->matrix.dot(snake[i] & 0x0f, snake[i] >> 4, 1);
+  disp->matrix.dot(foodX, foodY, 1);
+  disp->matrix.update();
 }
 
 void SnakeGame::advance() {
   int hx = (snake[0] & 0x0f) + vecX,
       hy = (snake[0] >> 4) + vecY;
 
-  if (hx < 0 || hx >= lc->getColumnsCount() ||
-      hy < 0 || hy >= lc->getRowsCount()) {
+  if (hx < 0 || hx >= width || hy < 0 || hy >= height) {
     // showGameOverMessage();
     isGameOver = true;
   }
@@ -64,13 +64,13 @@ void SnakeGame::advance() {
   if (grow) {
     bool inSnake;
 
-    rtttl::begin(SPEAKER_PIN, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
+    rtttl::begin(buzzerPin, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
 
     length++;
     randomSeed(millis());
     do {
-      foodX = random(lc->getColumnsCount());
-      foodY = random(lc->getRowsCount());
+      foodX = random(width);
+      foodY = random(height);
       inSnake = false;
       for (int i=0; i<length; i++) {
         if ((snake[i] & 0x0f) == foodX &&
@@ -107,35 +107,28 @@ void SnakeGame::readControls() {
   }
 }
 
-void SnakeGame::loop() {
+void SnakeGame::handle() {
   unsigned long now = millis();
 
   readControls();
 
   if (!isGameOver) {
     if (now - prevAdvance > 250) {
-      lc->setLed(snake[length-1] >> 4, snake[length-1] & 0x0f, false);
+      disp->matrix.dot(snake[length-1] & 0x0f, snake[length-1] >> 4, 0);
       advance();
       prevAdvance = now;
       render();
     }
   } else {
     if ((now / 300) % 2 == 0) {
-      lc->clearDisplay();
+      disp->matrix.clear();
+      disp->matrix.clearDisplay();
     } else {
       render();
     }
   }
 
   rtttl::play();
-}
-
-bool SnakeGame::handleStart() {
-  if (isGameOver) {
-    newGame();
-    return true;
-  }
-  return false;
 }
 
 // vim:et:sw=2:ai

@@ -2,17 +2,18 @@
 #define BaseGame_h
 
 #include "Keyboard.h"
-#include "MultiLedControl.h"
+#include "Display.h"
 
 class BaseGame {
   protected:
     Keyboard *kbd;
-    MultiLedControl *lc;
+    Display *disp;
+    int buzzerPin;
   public:
-    BaseGame(Keyboard *kbd, MultiLedControl *lc);
-    virtual void loop() = 0;
-    virtual bool handleStart();
-    virtual bool handleSelect();
+    bool isGameOver = false;
+    BaseGame(Keyboard *kbd, Display *disp, int buzzerPin);
+    virtual void reset();
+    virtual void handle() = 0;
 };
 
 #endif	//BaseGame.h
