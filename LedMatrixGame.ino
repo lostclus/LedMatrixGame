@@ -83,6 +83,7 @@ void setup() {
   // Serial.begin(115200);
   // Serial.println("Starting...");
   randomSeed(analogRead(0));
+  pinMode(BUZZER_PIN, OUTPUT);
 
   kbd = new Keyboard(3, 3, kbdRowPins, kbdColPins);
   disp = new Display();
@@ -137,10 +138,6 @@ void loop() {
 
     disp->run.tick();
   }
-
-  if (!rtttl::isPlaying())
-    pinMode(BUZZER_PIN, INPUT);
-
 }
 
 // vim:ai:et:sw=2
