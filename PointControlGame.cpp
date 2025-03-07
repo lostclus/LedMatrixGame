@@ -1,10 +1,8 @@
-#include <NonBlockingRtttl.h>
-
 #include "PointControlGame.h"
 #include "KeyDef.h"
 
-PointControlGame::PointControlGame(Keyboard *kbd, Display *disp, int buzzerPin)
-  : BaseGame(kbd, disp, buzzerPin) {
+PointControlGame::PointControlGame(Keyboard *kbd, Display *disp, Speaker *spk)
+  : BaseGame(kbd, disp, spk) {
   pointX = disp->matrix.width() / 2;
   pointY = disp->matrix.height() / 2;
   disp->matrix.clear();
@@ -38,16 +36,13 @@ void PointControlGame::handle() {
     disp->matrix.dot(pointX, pointY, 1);
 
     if (pointX == targetX && pointY == targetY) {
-      rtttl::begin(buzzerPin, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
-
+      spk->sound1();
       nextTarget();
     }
   }
 
   disp->matrix.dot(targetX, targetY, now % 500 < 250);
   disp->matrix.update();
-
-  rtttl::play();
 }
 
 // vim:et:sw=2:ai

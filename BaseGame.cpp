@@ -1,9 +1,9 @@
 #include "BaseGame.h"
 
-BaseGame::BaseGame(Keyboard *kbd, Display *disp, int buzzerPin) {
+BaseGame::BaseGame(Keyboard *kbd, Display *disp, Speaker *spk) {
   this->kbd = kbd;
   this->disp = disp;
-  this->buzzerPin = buzzerPin;
+  this->spk = spk;
 }
 
 void BaseGame::reset() {

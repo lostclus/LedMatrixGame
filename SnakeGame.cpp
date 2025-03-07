@@ -1,10 +1,8 @@
-#include <NonBlockingRtttl.h>
-
 #include "SnakeGame.h"
 #include "KeyDef.h"
 
-SnakeGame::SnakeGame(Keyboard *kbd, Display *disp, int buzzerPin)
-  : BaseGame(kbd, disp, buzzerPin) {
+SnakeGame::SnakeGame(Keyboard *kbd, Display *disp, Speaker *spk)
+  : BaseGame(kbd, disp, spk) {
   width = disp->matrix.width();
   height = disp->matrix.height();
   snake = new byte[width * height];
@@ -64,7 +62,7 @@ void SnakeGame::advance() {
   if (grow) {
     bool inSnake;
 
-    rtttl::begin(buzzerPin, ":d=16,o=5,b=600:a,b,c,d,e,f,g");
+    spk->sound1();
 
     length++;
     randomSeed(millis());
@@ -127,8 +125,6 @@ void SnakeGame::handle() {
       render();
     }
   }
-
-  rtttl::play();
 }
 
 // vim:et:sw=2:ai

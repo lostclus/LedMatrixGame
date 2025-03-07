@@ -17,6 +17,8 @@ class Display {
 
     Display();
     void begin();
+
+    void runGameOver();
 };
 
 #endif	//Display.h

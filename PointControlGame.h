@@ -9,7 +9,7 @@ class PointControlGame : public BaseGame {
     byte pointX, pointY,
          targetX, targetY;
   public:
-    PointControlGame(Keyboard *kbd, Display *disp, int buzzerPin);
+    PointControlGame(Keyboard *kbd, Display *disp, Speaker *spk);
     void nextTarget();
     virtual void handle();
 };

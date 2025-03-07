@@ -3,15 +3,17 @@
 
 #include "Keyboard.h"
 #include "Display.h"
+#include "Speaker.h"
 
 class BaseGame {
   protected:
     Keyboard *kbd;
     Display *disp;
+    Speaker *spk;
     int buzzerPin;
   public:
     bool isGameOver = false;
-    BaseGame(Keyboard *kbd, Display *disp, int buzzerPin);
+    BaseGame(Keyboard *kbd, Display *disp, Speaker *spk);
     virtual void reset();
     virtual void handle() = 0;
 };

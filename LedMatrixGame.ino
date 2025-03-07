@@ -1,14 +1,15 @@
 #include <GyverMAX7219.h>
 #include <RunningGFX.h>
-#include <NonBlockingRtttl.h>
 
 
 #include "Display.h"
 #include "Keyboard.h"
 #include "KeyDef.h"
+#include "Speaker.h"
 #include "BaseGame.h"
 #include "PointControlGame.h"
 #include "SnakeGame.h"
+#include "Arkanoid.h"
 
 #define BUZZER_PIN 2
 #define KBD_ROW1_PIN 4
@@ -32,20 +33,22 @@ byte kbdColPins[] = {KBD_COL1_PIN,
 
 Keyboard *kbd;
 Display *disp;
+Speaker *spk;
 BaseGame *game;
 bool isPause;
 
-typedef BaseGame *game_factory_t(Keyboard *kbd, Display *disp);
+typedef BaseGame *game_factory_t(Keyboard *kbd, Display *disp, Speaker *spk);
 typedef struct game_t {
   char *name;
   game_factory_t *factory;
 };
 
 #define GAME_FACTORY(CLASS) \
-  [](Keyboard *kbd, Display *disp){ return (BaseGame*)new CLASS(kbd, disp, BUZZER_PIN); }
+  [](Keyboard *kbd, Display *disp, Speaker *spk){ return (BaseGame*)new CLASS(kbd, disp, spk); }
 
 const char SNAKE_NAME[] PROGMEM = "Snake";
 const char POINT_CONTROL_NAME[] PROGMEM = "Point control";
+const char ARKANOID_NAME[] PROGMEM = "Arkanoid";
 
 game_t games[] = {
   {
@@ -55,20 +58,24 @@ game_t games[] = {
   {
     POINT_CONTROL_NAME,
     GAME_FACTORY(PointControlGame),
+  },
+  {
+    ARKANOID_NAME,
+    GAME_FACTORY(ArkanoidGame),
   }
 };
 
 int gameIndex;
 
 BaseGame *newGame() {
-  return games[gameIndex].factory(kbd, disp);
+  return games[gameIndex].factory(kbd, disp, spk);
 }
 
 void updateMenu() {
   int dw = disp->matrix.width(),
       dh = disp->matrix.height();
 
-  rtttl::stop();
+  spk->stop();
 
   disp->matrix.clearDisplay();
   disp->matrix.clear();
@@ -88,6 +95,7 @@ void setup() {
   kbd = new Keyboard(3, 3, kbdRowPins, kbdColPins);
   disp = new Display();
   disp->begin();
+  spk = new Speaker(BUZZER_PIN);
 
   isPause = false;
   gameIndex = 0;
@@ -126,6 +134,7 @@ void loop() {
 
   if (game != NULL) {
     if (!isPause) game->handle();
+    spk->handle();
   } else {
     if (kbd->isKeyPress(KEY_LEFT) || kbd->isKeyPress(KEY_UP)) {
       gameIndex = max(0, gameIndex - 1);

@@ -18,7 +18,7 @@ class SnakeGame : public BaseGame {
     void readControls();
  
   public:
-    SnakeGame(Keyboard *kbd, Display *disp, int buzzerPin);
+    SnakeGame(Keyboard *kbd, Display *disp, Speaker *spk);
     ~SnakeGame();
     virtual void reset();
     virtual void handle();
