@@ -78,6 +78,10 @@ void ArkanoidGame::handle() {
           spk->sound2();
       }
     }
+
+    if (ballDY < 0 && ballY == 0) {
+      ballDY = abs(ballDY);
+    }
     
     draw();
   }
