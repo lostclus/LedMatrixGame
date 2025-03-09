@@ -6,7 +6,7 @@
 class ArkanoidGame : public BaseGame {
   private:
     int ballX, ballY, ballDX, ballDY;
-    int paddleX;
+    int paddleX, paddleY;
     static const int PADDLE_WIDTH = 4;
     static const int BALL_SPEED = 1;
     static const int BRICK_ROWS = 3;

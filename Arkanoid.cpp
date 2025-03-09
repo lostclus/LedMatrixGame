@@ -15,6 +15,7 @@ void ArkanoidGame::reset() {
   ballDX = BALL_SPEED;
   ballDY = BALL_SPEED;
   paddleX = (width - PADDLE_WIDTH) / 2;
+  paddleY = height - 1;
   memset(bricks, true, sizeof(bricks));
 }
 
@@ -31,6 +32,10 @@ void ArkanoidGame::handle() {
     paddleX--;
   } else if (kbd->isKeyPress(KEY_RIGHT) && paddleX < width - PADDLE_WIDTH) {
     paddleX++;
+  } else if (kbd->isKeyPress(KEY_UP) && paddleY > BRICK_ROWS) {
+    paddleY--;
+  } else if (kbd->isKeyPress(KEY_DOWN) && paddleY < height - 1) {
+    paddleY++;
   }
   
   if (now - prevUpdate > 150) {
@@ -51,7 +56,7 @@ void ArkanoidGame::handle() {
       spk->sound2();
     }
     
-    if (ballY >= height - 1) {
+    if (ballY >= paddleY) {
       if (ballX >= paddleX && ballX < paddleX + PADDLE_WIDTH) {
 	ballDY = -ballDY;
         spk->sound2();
@@ -99,7 +104,7 @@ void ArkanoidGame::draw() {
   }
   
   for (int i = 0; i < PADDLE_WIDTH; i++) {
-    disp->matrix.dot(paddleX + i, height - 1, 1);
+    disp->matrix.dot(paddleX + i, paddleY, 1);
   }
   
   disp->matrix.dot(ballX, ballY, 1);
