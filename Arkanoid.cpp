@@ -44,21 +44,22 @@ void ArkanoidGame::handle() {
     ballX += ballDX;
     ballY += ballDY;
     
-    if (ballX <= 0 || ballX >= width - 1) {
-      ballDX = -ballDX;
+    if (ballX <= 0) {
+      ballDX = abs(ballDX);
+      spk->sound2();
+    } else if (ballX >= width - 1) {
+      ballDX = -abs(ballDX);
       spk->sound2();
     }
+
     if (ballY <= 0) {
-      ballDY = -ballDY;
-      if (now % 3 == 0) {
-	ballDX = -ballDX;
-      }
+      ballDY = abs(ballDY);
       spk->sound2();
     }
     
     if (ballY >= paddleY) {
       if (ballX >= paddleX && ballX < paddleX + PADDLE_WIDTH) {
-	ballDY = -ballDY;
+	ballDY = -abs(ballDY);
         spk->sound2();
       } else {
 	isGameOver = true;
