@@ -20,3 +20,6 @@ install: compile upload
 
 monitor:
 	minicom -D $(PORT)
+
+compile-stl:
+	$(MAKE) -C 3DPrint compile
